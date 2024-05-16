@@ -1,105 +1,102 @@
 import processing.core.PApplet;
 
 /**
- * Creates a sketch that simulates snow falling, when the down arrow is pressed
- * on the keyboard, the snow falls faster, when the up arrow is pressed the snow
- * falls slower
+ * Creates a sketch that simulates snow falling, the character's goal is to avoid
+ * the snowflakes as they fall.
  * 
  * @author NJudd
  */
 public class Sketch extends PApplet {
-  // initializes variables and arrays
-  int intScreenW = 800;
-  int intScreenH = 600;
-  int intSnowCount = 80;
-  float fltSnowSpeed;
-  boolean blnSnowSlow = false;
-  boolean blnSnowFast = false;
-  float[] fltSnowX = new float[intSnowCount];
-  float[] fltSnowY = new float[intSnowCount];
+    // Initializes background variables
+    int intScreenW = 800;
+    int intScreenH = 600;
 
-  /**
-   * initializes background size
-   * 
-   * @author NJudd
-   */
-  public void settings() {
-    // background size
-    size(800, 600);
-  }
+    // Initializes snow variables
+    int intSnowCount = 60;
+    float fltSnowSize = 20;
+    float fltSnowSpeed;
+    boolean blnSnowSlow = false;
+    boolean blnSnowFast = false;
+    Snowflake[] snow; // an array of snowflake objects
 
-  /**
-   * initializes background colour, snow colour, and snow position
-   * 
-   * @author NJudd
-   */
-  public void setup() {
-    // baclground colour
-    background(0, 10, 60);
-    // sets colour of snow
-    fill(255);
-    stroke(255);
-    // sets snow position
-    for (int i = 0; i < intSnowCount; i++) {
-      fltSnowX[i] = random(0, intScreenW);
-      fltSnowY[i] = random(0, intScreenH);
-    }
-  }
+    // Initializes variables for lives
+    float fltLifeSize = 50;
+    int intLifeCount = 3;
+    boolean[] blnLives = new boolean[intLifeCount];
 
-  /**
-   * top level method to execute the program
-   * 
-   * @author NJudd
-   */
-  public void draw() {
-    // recalls background
-    background(0, 10, 60);
-
-    // changes speed of cloud
-    if (blnSnowSlow) {
-      fltSnowSpeed = 3;
-    } else if (blnSnowFast) {
-      fltSnowSpeed = 9;
-    } else {
-      fltSnowSpeed = 6;
+    /**
+     * Initializes background size.
+     */
+    public void settings() {
+        // Background size
+        size(800, 600);
     }
 
-    // prints snow falling
-    for (int i = 0; i < intSnowCount; i++) {
-      fltSnowY[i] += fltSnowSpeed;
-      // checks if snow is at the bottom of the screen
-      if (fltSnowY[i] > intScreenH) {
-        // resets snow y position
-        fltSnowY[i] = 0;
-      }
-      // prints snow
-      ellipse(fltSnowX[i], fltSnowY[i], 25, 25);
-    }
-  }
+    /**
+     * Sets up the initial environment.
+     */
+    public void setup() {
+        // Background color
+        background(0, 10, 60);
 
-  /**
-   * allows the snow to fall faster or slower
-   * 
-   * @author NJudd
-   */
-  public void keyPressed() {
-    if (keyCode == UP) {
-      blnSnowSlow = true;
-    } else if (keyCode == DOWN) {
-      blnSnowFast = true;
-    }
-  }
+        // Sets color of snow
+        fill(255);
+        stroke(255);
 
-  /**
-   * resets the snow speed
-   * 
-   * @author NJudd
-   */
-  public void keyReleased() {
-    if (keyCode == UP) {
-      blnSnowSlow = false;
-    } else if (keyCode == DOWN) {
-      blnSnowFast = false;
+        // Creates snowflakes
+        snow = new Snowflake[intSnowCount];
+        for (int i = 0; i < intSnowCount; i++) {
+            snow[i] = new Snowflake(this, fltSnowSize);
+        }
+
+        // Sets lives to full
+        for (int i = 0; i < intLifeCount; i++) {
+            blnLives[i] = true;
+        }
     }
-  }
+
+    /**
+     * Top level method to execute the program.
+     */
+    public void draw() {
+        // Recalls background
+        background(0, 10, 60);
+
+        // Changes speed of snow
+        if (blnSnowSlow) {
+            fltSnowSpeed = 3;
+        } else if (blnSnowFast) {
+            fltSnowSpeed = 9;
+        } else {
+            fltSnowSpeed = 6;
+        }
+
+        // Prints snow falling
+        for (int i = 0; i < intSnowCount; i++) {
+            snow[i].fall(fltSnowSpeed);
+            snow[i].draw();
+        }
+    }
+
+    /**
+     * Allows the snow to fall faster or slower.
+     */
+    public void keyPressed() {
+        if (keyCode == UP) {
+            blnSnowSlow = true;
+        } else if (keyCode == DOWN) {
+            blnSnowFast = true;
+        }
+    }
+
+    /**
+     * Resets the snow speed.
+     */
+    public void keyReleased() {
+        if (keyCode == UP) {
+            blnSnowSlow = false;
+        } else if (keyCode == DOWN) {
+            blnSnowFast = false;
+        }
+    }
 }
