@@ -22,7 +22,30 @@ public class Snowflake {
         p = P;
         fltSize = size;
         fltPosX = p.random(p.width);
-        fltPosY = p.random(p.height);
+        fltPosY = p.random(p.height - 50);
+    }
+
+    /**
+     * Getter method for fltPosX
+     * 
+     * @return the x coordinate of the snowflake
+     */
+    public float getSnowflakePositionX() {
+        return fltPosX;
+    }
+
+    /**
+     * Getter method for fltPosY
+     * 
+     * @return the y coordinate of the snowflake
+     */
+    public float getSnowflakePositionY() {
+        return fltPosY;
+    }
+
+    public void setSnowflakePosition(float posX, float posY) {
+        fltPosX = posX;
+        fltPosY = posY;
     }
 
     /**
@@ -33,7 +56,7 @@ public class Snowflake {
      */
     public void fall(float speed) {
         fltPosY += speed;
-        if (fltPosY > p.height) {
+        if (fltPosY > p.height - 50) {
             fltPosY = 0;
             fltPosX = p.random(p.width);
         }
@@ -43,6 +66,9 @@ public class Snowflake {
      * Prints the snowflakes to the screen when called
      */
     public void draw() {
+        p.strokeWeight(1);
+        p.fill(255);
+        p.stroke(255);
         p.ellipse(fltPosX, fltPosY, fltSize, fltSize);
     }
 }
