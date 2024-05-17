@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PImage;
 
 /**
  * Creates a Snowflake class
@@ -9,20 +10,23 @@ public class Snowflake {
     // Instance variables
     private float fltPosX;
     private float fltPosY;
-    private float fltSize;
+    private int intSize;
     private PApplet p; // Reference to the PApplet instance
+    private PImage imgSnowflake;
 
     /**
-     * Constructor: Initializes the snowflake’s position and size.
+     * Constructor: Initializes the snowflake’s position, size and image.
      * 
      * @param P    reference to the PApplet instance
      * @param size width and height of the snowflakes
      */
-    public Snowflake(PApplet P, float size) {
+    public Snowflake(PApplet P, int size) {
         p = P;
-        fltSize = size;
+        intSize = size;
         fltPosX = p.random(p.width);
-        fltPosY = p.random(p.height - 45 - fltSize / 2); // 45 is the size of safe zone
+        fltPosY = p.random(p.height - 45 - intSize); // 45 is the size of safe zone
+        imgSnowflake = p.loadImage("snowflake.png");
+        imgSnowflake.resize(intSize, intSize);
     }
 
     /**
@@ -62,7 +66,7 @@ public class Snowflake {
      */
     public void fall(float speed) {
         fltPosY += speed;
-        if (fltPosY > p.height - 45 - fltSize / 2) { // 45 is the size of safe zone
+        if (fltPosY > p.height - 45 - intSize) { // 45 is the size of safe zone
             fltPosY = 0;
             fltPosX = p.random(p.width);
         }
@@ -72,9 +76,6 @@ public class Snowflake {
      * Prints the snowflakes to the screen when called
      */
     public void draw() {
-        p.strokeWeight(1);
-        p.fill(255);
-        p.stroke(255);
-        p.ellipse(fltPosX, fltPosY, fltSize, fltSize);
+        p.image(imgSnowflake, fltPosX, fltPosY);
     }
 }

@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PImage;
 
 /**
  * Creates a sketch that simulates snow falling, the character's goal is to
@@ -11,32 +12,38 @@ public class Sketch extends PApplet {
   int intScreenW = 800;
   int intScreenH = 650;
 
-  // Background colours
-  int intScreenR = 0;
-  int intScreenG = 10;
-  int intScreenB = 60;
+  // Background images
+  PImage imgBG;
+  PImage imgSnowScene;
+  PImage imgGameOver;
 
   // Initializes snow variables
   int intSnowCount = 15;
-  float fltSnowSize = 50;
+  int intSnowSize = 50;
   float fltSnowSpeed;
   boolean blnSnowSlow = false;
   boolean blnSnowFast = false;
   Snowflake[] snow; // an array of snowflake objects
 
   // Initializes variables for lives
-  float fltLifeSize = 35;
+  int intLifeSize = 35;
   int intLifeCount = 3;
+
+  // Lives image
+  PImage imgLives;
 
   // Safe zone variables
   float fltSafeZone = intScreenH - 50;
 
   // Initializes variables for the player
-  float fltPlayerX = intScreenW / 2;
-  float fltPlayerY = intScreenH - 25;
+  int intPlayerW = 40;
+  int intPlayerH = 40;
+  float fltPlayerX = intScreenW / 2 - intPlayerW / 2;
+  float fltPlayerY = intScreenH - 44;
   float fltPlayerSpeed = 3;
-  float fltPlayerW = 25;
-  float fltPlayerH = 25;
+
+  // Image for the player
+  PImage imgPlayer;
 
   // Player movement variables
   boolean blnPlayerUp = false;
@@ -56,13 +63,29 @@ public class Sketch extends PApplet {
    * Sets up the initial environment.
    */
   public void setup() {
-    // Background color
-    background(intScreenR, intScreenG, intScreenB);
+    // Snow background image
+    imgSnowScene = loadImage("SnowBackground.jpg");
+    imgSnowScene.resize(intScreenW, intScreenH);
+
+    // Game Over background image
+    imgGameOver = loadImage("GameOver.jpg");
+    imgGameOver.resize(intScreenW, intScreenH);
+
+    // Sets the current background
+    imgBG = imgSnowScene;
+
+    // Player image
+    imgPlayer = loadImage("santa.png");
+    imgPlayer.resize(intPlayerW, intPlayerH);
+
+    // Lives image
+    imgLives = loadImage("heart.png");
+    imgLives.resize(intLifeSize, intLifeSize);
 
     // Creates snowflakes
     snow = new Snowflake[intSnowCount];
     for (int i = 0; i < intSnowCount; i++) {
-      snow[i] = new Snowflake(this, fltSnowSize);
+      snow[i] = new Snowflake(this, intSnowSize);
     }
   }
 
@@ -71,7 +94,7 @@ public class Sketch extends PApplet {
    */
   public void draw() {
     // Recalls background
-    background(intScreenR, intScreenG, intScreenB);
+    image(imgBG, 0, 0);
 
     // Changes speed of snow
     if (blnSnowSlow) {
@@ -103,17 +126,26 @@ public class Sketch extends PApplet {
     }
 
     // Draws player on the screen
-    strokeWeight(1);
-    stroke(0, 255, 255);
-    fill(0, 255, 255);
-    ellipse(fltPlayerX, fltPlayerY, fltPlayerW, fltPlayerH);
+    image(imgPlayer, fltPlayerX, fltPlayerY);
+
+    // Stops player from moving off the screen
+    if (fltPlayerX <= 0) {
+      fltPlayerX = 0;
+    } else if (fltPlayerX + intPlayerW >= intScreenW) {
+      fltPlayerX = intScreenW - intPlayerW;
+    }
+    if (fltPlayerY <= 0) {
+      fltPlayerY = 0;
+    } else if (fltPlayerY + intPlayerH >= intScreenH) {
+      fltPlayerY = intScreenH - intPlayerH;
+    }
 
     // Checks if player touches snowflakes
     for (int i = 0; i < intSnowCount; i++) {
-      if (snow[i].getSnowflakePositionX() - fltSnowSize / 2 < fltPlayerX + fltPlayerW / 2
-          && snow[i].getSnowflakePositionX() + fltSnowSize / 2 > fltPlayerX - fltPlayerW / 2
-          && snow[i].getSnowflakePositionY() + fltSnowSize / 2 > fltPlayerY - fltPlayerH / 2
-          && snow[i].getSnowflakePositionY() - fltSnowSize / 2 < fltPlayerY + fltPlayerH / 2) {
+      if (snow[i].getSnowflakePositionX() < fltPlayerX + intPlayerW
+          && snow[i].getSnowflakePositionX() + intSnowSize > fltPlayerX
+          && snow[i].getSnowflakePositionY() + intSnowSize > fltPlayerY
+          && snow[i].getSnowflakePositionY() < fltPlayerY + intPlayerH) {
         // Substracts life
         intLifeCount -= 1;
 
@@ -129,28 +161,17 @@ public class Sketch extends PApplet {
 
     // Draw player lives of the screen
     if (intLifeCount == 3) { // three is the maximum amount of lifes
-      strokeWeight(1);
-      stroke(200, 0, 0);
-      fill(200, 0, 0);
-      rect(755, 10, fltLifeSize, fltLifeSize);
-      rect(755 - 10 - fltLifeSize, 10, fltLifeSize, fltLifeSize);
-      rect(755 - 20 - 2 * fltLifeSize, 10, fltLifeSize, fltLifeSize);
+      image(imgLives, 755, 10);
+      image(imgLives, 755 - 10 - intLifeSize, 10);
+      image(imgLives, 755 - 20 - 2 * intLifeSize, 10);
     } else if (intLifeCount == 2) {
-      strokeWeight(1);
-      stroke(200, 0, 0);
-      fill(200, 0, 0);
-      rect(755, 10, fltLifeSize, fltLifeSize);
-      rect(755 - 10 - fltLifeSize, 10, fltLifeSize, fltLifeSize);
+      image(imgLives, 755, 10);
+      image(imgLives, 755 - 10 - intLifeSize, 10);
     } else if (intLifeCount == 1) {
-      strokeWeight(1);
-      stroke(200, 0, 0);
-      fill(200, 0, 0);
-      rect(755, 10, fltLifeSize, fltLifeSize);
+      image(imgLives, 755, 10);
     } else {
-      intScreenR = 255;
-      intScreenG = 255;
-      intScreenB = 255;
-      background(intScreenR, intScreenG, intScreenB);
+      imgBG = imgGameOver;
+      image(imgBG, 0, 0);
     }
 
   }
@@ -206,10 +227,10 @@ public class Sketch extends PApplet {
    */
   public void mousePressed() {
     for (int i = 0; i < intSnowCount; i++) {
-      if (snow[i].getSnowflakePositionX() - fltSnowSize / 2 < mouseX
-          && snow[i].getSnowflakePositionX() + fltSnowSize / 2 > mouseX
-          && snow[i].getSnowflakePositionY() + fltSnowSize / 2 > mouseY
-          && snow[i].getSnowflakePositionY() - fltSnowSize / 2 < mouseY) {
+      if (snow[i].getSnowflakePositionX() < mouseX
+          && snow[i].getSnowflakePositionX() + intSnowSize > mouseX
+          && snow[i].getSnowflakePositionY() + intSnowSize > mouseY
+          && snow[i].getSnowflakePositionY() < mouseY) {
         // Resets the snowflakes position
         snow[i].setSnowflakePosition(random(width), 0);
       }
