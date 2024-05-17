@@ -2,8 +2,7 @@ import processing.core.PApplet;
 
 /**
  * Creates a sketch that simulates snow falling, the character's goal is to
- * avoid
- * the snowflakes as they fall.
+ * avoid the snowflakes as they fall.
  * 
  * @author NJudd
  */
@@ -11,14 +10,15 @@ public class Sketch extends PApplet {
   // Initializes background variables
   int intScreenW = 800;
   int intScreenH = 650;
+
   // Background colours
   int intScreenR = 0;
   int intScreenG = 10;
   int intScreenB = 60;
 
   // Initializes snow variables
-  int intSnowCount = 25;
-  float fltSnowSize = 15;
+  int intSnowCount = 15;
+  float fltSnowSize = 50;
   float fltSnowSpeed;
   boolean blnSnowSlow = false;
   boolean blnSnowFast = false;
@@ -37,6 +37,7 @@ public class Sketch extends PApplet {
   float fltPlayerSpeed = 3;
   float fltPlayerW = 25;
   float fltPlayerH = 25;
+
   // Player movement variables
   boolean blnPlayerUp = false;
   boolean blnPlayerDown = false;
@@ -76,9 +77,9 @@ public class Sketch extends PApplet {
     if (blnSnowSlow) {
       fltSnowSpeed = 1;
     } else if (blnSnowFast) {
-      fltSnowSpeed = 7;
+      fltSnowSpeed = 5;
     } else {
-      fltSnowSpeed = 4;
+      fltSnowSpeed = 3;
     }
 
     // Prints snow falling
@@ -109,13 +110,14 @@ public class Sketch extends PApplet {
 
     // Checks if player touches snowflakes
     for (int i = 0; i < intSnowCount; i++) {
-      if (snow[i].getSnowflakePositionX() < fltPlayerX + fltPlayerW / 2
-          && snow[i].getSnowflakePositionX() > fltPlayerX - fltPlayerW / 2
-          && snow[i].getSnowflakePositionY() > fltPlayerY - fltPlayerH / 2
-          && snow[i].getSnowflakePositionY() < fltPlayerY + fltPlayerH / 2) {
+      if (snow[i].getSnowflakePositionX() - fltSnowSize / 2 < fltPlayerX + fltPlayerW / 2
+          && snow[i].getSnowflakePositionX() + fltSnowSize / 2 > fltPlayerX - fltPlayerW / 2
+          && snow[i].getSnowflakePositionY() + fltSnowSize / 2 > fltPlayerY - fltPlayerH / 2
+          && snow[i].getSnowflakePositionY() - fltSnowSize / 2 < fltPlayerY + fltPlayerH / 2) {
         // Substracts life
         intLifeCount -= 1;
-        // Resets the snowslakes position that the player colides with
+
+        // Resets the snowflakes position that the player colides with
         snow[i].setSnowflakePosition(random(width), 0);
       }
     }
@@ -196,6 +198,21 @@ public class Sketch extends PApplet {
       blnPlayerLeft = false;
     } else if (key == 'd') {
       blnPlayerRight = false;
+    }
+  }
+
+  /**
+   * Resets snowflake's position that were clicked on
+   */
+  public void mousePressed() {
+    for (int i = 0; i < intSnowCount; i++) {
+      if (snow[i].getSnowflakePositionX() - fltSnowSize / 2 < mouseX
+          && snow[i].getSnowflakePositionX() + fltSnowSize / 2 > mouseX
+          && snow[i].getSnowflakePositionY() + fltSnowSize / 2 > mouseY
+          && snow[i].getSnowflakePositionY() - fltSnowSize / 2 < mouseY) {
+        // Resets the snowflakes position
+        snow[i].setSnowflakePosition(random(width), 0);
+      }
     }
   }
 }

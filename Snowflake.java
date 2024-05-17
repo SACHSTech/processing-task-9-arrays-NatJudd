@@ -22,7 +22,7 @@ public class Snowflake {
         p = P;
         fltSize = size;
         fltPosX = p.random(p.width);
-        fltPosY = p.random(p.height - 50);
+        fltPosY = p.random(p.height - 45 - fltSize / 2); // 45 is the size of safe zone
     }
 
     /**
@@ -43,6 +43,12 @@ public class Snowflake {
         return fltPosY;
     }
 
+    /**
+     * Setter method for snowflake x and y position
+     * 
+     * @param posX x position
+     * @param posY y position
+     */
     public void setSnowflakePosition(float posX, float posY) {
         fltPosX = posX;
         fltPosY = posY;
@@ -56,7 +62,7 @@ public class Snowflake {
      */
     public void fall(float speed) {
         fltPosY += speed;
-        if (fltPosY > p.height - 50) {
+        if (fltPosY > p.height - 45 - fltSize / 2) { // 45 is the size of safe zone
             fltPosY = 0;
             fltPosX = p.random(p.width);
         }
